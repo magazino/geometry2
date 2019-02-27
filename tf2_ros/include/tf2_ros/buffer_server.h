@@ -81,6 +81,7 @@ namespace tf2_ros
       void checkTransforms(const ros::TimerEvent& e);
       bool canTransform(GoalHandle gh);
       geometry_msgs::TransformStamped lookupTransform(GoalHandle gh);
+      tf2_msgs::LookupTransformResult getLookupTransformResult(GoalHandle gh);
 
       const Buffer& buffer_;
       LookupTransformServer server_;

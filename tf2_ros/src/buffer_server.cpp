@@ -62,49 +62,11 @@ namespace tf2_ros
       //has expired, or a transform is available
       if(canTransform(info.handle) || info.end_time < ros::Time::now())
       {
-        tf2_msgs::LookupTransformResult result;
-
-        //try to populate the result, catching exceptions if they occur
-        try
-        {
-          result.transform = lookupTransform(info.handle);
-        }
-        catch (tf2::ConnectivityException &ex)
-        {
-          result.error.error = result.error.CONNECTIVITY_ERROR;
-          result.error.error_string = ex.what();
-        }
-        catch (tf2::LookupException &ex)
-        {
-          result.error.error = result.error.LOOKUP_ERROR;
-          result.error.error_string = ex.what();
-        }
-        catch (tf2::ExtrapolationException &ex)
-        {
-          result.error.error = result.error.EXTRAPOLATION_ERROR;
-          result.error.error_string = ex.what();
-        }
-        catch (tf2::InvalidArgumentException &ex)
-        {
-          result.error.error = result.error.INVALID_ARGUMENT_ERROR;
-          result.error.error_string = ex.what();
-        }
-        catch (tf2::TimeoutException &ex)
-        {
-          result.error.error = result.error.TIMEOUT_ERROR;
-          result.error.error_string = ex.what();
-        }
-        catch (tf2::TransformException &ex)
-        {
-          result.error.error = result.error.TRANSFORM_ERROR;
-          result.error.error_string = ex.what();
-        }
-
         //make sure to pass the result to the client
         //even failed transforms are considered a success
         //since the request was successfully processed
         it = active_goals_.erase(it);
-        info.handle.setSucceeded(result);
+        info.handle.setSucceeded(getLookupTransformResult(info.handle));
       }
       else
         ++it;
@@ -146,43 +108,7 @@ namespace tf2_ros
     //we'll also do this if the end time has been reached 
     if(canTransform(gh) || goal_info.end_time <= ros::Time::now())
     {
-      tf2_msgs::LookupTransformResult result;
-      try
-      {
-        result.transform = lookupTransform(gh);
-      }
-      catch (tf2::ConnectivityException &ex)
-      {
-        result.error.error = result.error.CONNECTIVITY_ERROR;
-        result.error.error_string = ex.what();
-      }
-      catch (tf2::LookupException &ex)
-      {
-        result.error.error = result.error.LOOKUP_ERROR;
-        result.error.error_string = ex.what();
-      }
-      catch (tf2::ExtrapolationException &ex)
-      {
-        result.error.error = result.error.EXTRAPOLATION_ERROR;
-        result.error.error_string = ex.what();
-      }
-      catch (tf2::InvalidArgumentException &ex)
-      {
-        result.error.error = result.error.INVALID_ARGUMENT_ERROR;
-        result.error.error_string = ex.what();
-      }
-      catch (tf2::TimeoutException &ex)
-      {
-        result.error.error = result.error.TIMEOUT_ERROR;
-        result.error.error_string = ex.what();
-      }
-      catch (tf2::TransformException &ex)
-      {
-        result.error.error = result.error.TRANSFORM_ERROR;
-        result.error.error_string = ex.what();
-      }
-
-      gh.setSucceeded(result);
+      gh.setSucceeded(getLookupTransformResult(gh));
       return;
     }
 
@@ -212,6 +138,45 @@ namespace tf2_ros
 
     return buffer_.lookupTransform(goal->target_frame, goal->target_time, 
         goal->source_frame, goal->source_time, goal->fixed_frame);
+  }
+
+  tf2_msgs::LookupTransformResult BufferServer::getLookupTransformResult(GoalHandle gh) {
+    tf2_msgs::LookupTransformResult result;
+    try
+    {
+      result.transform = lookupTransform(gh);
+    }
+    catch (tf2::ConnectivityException &ex)
+    {
+      result.error.error = result.error.CONNECTIVITY_ERROR;
+      result.error.error_string = ex.what();
+    }
+    catch (tf2::LookupException &ex)
+    {
+      result.error.error = result.error.LOOKUP_ERROR;
+      result.error.error_string = ex.what();
+    }
+    catch (tf2::ExtrapolationException &ex)
+    {
+      result.error.error = result.error.EXTRAPOLATION_ERROR;
+      result.error.error_string = ex.what();
+    }
+    catch (tf2::InvalidArgumentException &ex)
+    {
+      result.error.error = result.error.INVALID_ARGUMENT_ERROR;
+      result.error.error_string = ex.what();
+    }
+    catch (tf2::TimeoutException &ex)
+    {
+      result.error.error = result.error.TIMEOUT_ERROR;
+      result.error.error_string = ex.what();
+    }
+    catch (tf2::TransformException &ex)
+    {
+      result.error.error = result.error.TRANSFORM_ERROR;
+      result.error.error_string = ex.what();
+    }
+    return result;
   }
 
   void BufferServer::start()
