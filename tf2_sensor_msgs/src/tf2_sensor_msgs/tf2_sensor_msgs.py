@@ -28,7 +28,6 @@
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs.point_cloud2 import read_points, create_cloud
 import PyKDL
-import rospy
 import tf2_ros
 
 def to_msg_msg(msg):

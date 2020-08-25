@@ -28,7 +28,6 @@
 # author: Wim Meeussen
 
 import PyKDL
-import rospy
 import tf2_ros
 from geometry_msgs.msg import PointStamped
 

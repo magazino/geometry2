@@ -29,7 +29,6 @@
 
 from geometry_msgs.msg import PoseStamped, Vector3Stamped, PointStamped, WrenchStamped
 import PyKDL
-import rospy
 import tf2_ros
 import copy
 
